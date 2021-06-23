@@ -1,0 +1,22 @@
+digraph topology {
+
+s1[type=switch,id=1,mac="20:00:00:00:00:01",ip="192.168.1.3"];
+s2[type=switch,id=2,mac="20:00:00:00:00:02",ip="192.168.1.3"];
+s3[type=switch,id=3,mac="20:00:00:00:00:03",ip="192.168.1.3"];
+
+h1[type=host,mac="00:00:00:00:00:01",ip="10.0.0.1"];
+h2[type=host,mac="00:00:00:00:00:02",ip="10.0.0.2"];
+
+s1 -> s2 [src_port=1, dst_port=2, cost=0, capacity="1Gbps", f = 0.2];
+
+s3 -> s2 [src_port=4, dst_port=3, cost=0, capacity="1Gbps", f = 0.2];
+
+s1 -> s3 [src_port=5, dst_port=6, cost=0, capacity="1Gbps", f = 0.2];
+
+h1 -> s1 [src_port=10, dst_port=11, cost=0, capacity="5Gbps", f = 0];
+s1 -> h1 [src_port=11, dst_port=10, cost=0, capacity="5Gbps", f = 0];
+
+h2 -> s2 [src_port=12, dst_port=13, cost=0, capacity="5Gbps", f = 0];
+s2 -> h2 [src_port=13, dst_port=12, cost=0, capacity="5Gbps", f = 0];
+
+}
