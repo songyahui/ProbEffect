@@ -1,4 +1,4 @@
-(* Source code *)
+
 
 type literal = 
     | INT of int
@@ -9,7 +9,7 @@ type expression =
     | Unit
     | Variable of string
     | Literal of literal
-
+(* 
 type test = 
     | Drop 
     | Skip
@@ -25,3 +25,4 @@ type probNetKAT =
     | Sequence of probNetKAT * probNetKAT
     | Choice of probNetKAT * probNetKAT * float 
     | Iteration of probNetKAT
+Source code *)
