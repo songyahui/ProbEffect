@@ -20,14 +20,14 @@
 %token EOF
 
 %start program
-%type <(Ast.expression) list> program
+%type <(Ast.statement) list> program
 
 
 %%
 
 program:
 | EOF {[]}
-| a = expression r = program { append [a] r }
+| a = statement r = program { append [a] r }
 
 literal: 
 | n = INTE {INT n}
@@ -35,4 +35,8 @@ literal:
 
 
 expression:
-| l = literal {Literal l }
+| {Filter Drop }
+
+
+statement:
+| ex = expression {Expr ex}

@@ -1,20 +1,44 @@
+type predicate = 
+      Drop
+    | Skip 
+    | EQ of string * int
+    | Conj of predicate * predicate
+    | Disj of predicate * predicate
+    | Neg  of predicate 
 
-type failure = 
-    Eq of int * bool 
-  | Choice of (float * failure) list
-  | Conj of failure * failure
+type term =
+  | Const of float
+  | Var   of string
+  | Add   of term * term
+  | Sub   of term * term
 
+type expression = 
+    | Filter    of predicate 
+    | Assign    of string * int
+    | Union     of expression * expression
+    | Sequence  of expression * expression
+    | Choice    of (term * expression) list
+    | Iteration of expression
 
 type literal = 
     | INT of int
     | STRING of string
-    | BOOL of bool
-    
-type expression = 
+
+type statement = 
     | Unit
-    | Variable of string
-    | Literal of literal
+    | Expr of expression
+    | FunctionDeclear of string * string list * statement
+    | Call of string * literal list
+    | Rules of (expression * expression) list
+    
+
+type program = statement list
+
+    
 (* 
+
+
+
 type test = 
     | Drop 
     | Skip
