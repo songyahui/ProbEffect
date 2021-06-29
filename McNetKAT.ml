@@ -63,6 +63,10 @@ let log s : unit =
   print_string ("{sw=" ^ string_of_int (!(s.sw)) ^", pt=" ^ string_of_int (!(s.pt)) ^ "}\n")
   ;;
 
+let string_of_failure f : unit = 
+  print_string ("{up3=" ^ string_of_int ((f.up3)) ^", up4=" ^ string_of_int ((f.up4)) ^ "}\n")
+  ;;
+
 let model p t = 
   let s = ingress in 
   log s;
@@ -83,37 +87,43 @@ let model p t =
 Probabilistic reasoning
 **********************************)
 
-let f0 n : int =
-  if n == 2 then 1 
-  else (* n=3 *) 1 
-  ;;
+let f0 : failure =
+  { up3  = 1;
+    up4  = 1;
+  };;
 
-let f1 n : int = f0 n ;;
 
 let prob (f:float): int = 
   Random.self_init ();
   let r = (Random.int 10) in 
   if of_int r < (f *. 10.0) then 1 else 0 ;;
 
+
+let f1 : failure = 
+  if  prob 0.5 == 1 then f0
+
+  else if prob 0.5 == 1 then 
+    { up3  = 0;
+      up4  = 1;
+    }
+
+  else 
+    { up3  = 1;
+      up4  = 0;
+    };;
+
   
-let f2 n : int = 
-  Random.self_init ();
-  let r3 = (Random.int 10) < in 
-  Random.self_init ();
-  let r4 = (Random.int 10) in 
+let f2 : failure = 
+  let r3 = prob 0.8 in 
+  let r4 = prob 0.8 in 
+  { up3  = r3;
+    up4  = r4;
+  };;
 
-  if n == 2 then 
-    if r3 < 8 then 
-  else (* n == 3 *) prob (0.0)
-  ;;
-
-
-let up (n:int) (f) : int = 
-  f n;;
   
 
-let p1_cap (s:state) f : unit  = 
-  if up 3 f == 1 then (s.pt) := 3 
+let p1_cap (s:state) (f:failure) : unit  = 
+  if f.up3 == 1 then (s.pt) := 3 
   else (s.pt) := 4 ;;
 
 
@@ -124,10 +134,28 @@ let p3_cap (s:state) : unit  =
   (s.pt) := 10;;
 
 
-let policy_cap (s:state) (f): unit =
+let policy_cap (s:state) (f:failure): unit =
   if !(s.sw) == 1 then  p1_cap s f else
   if !(s.sw) == 2 then  p2_cap s
   else p3_cap s ;;
+
+let topo_cap (s:state) (f:failure) :unit = 
+  if !(s.sw)==1 && (f.up3)==1 && !(s.pt)==3  then 
+    (
+      (s.sw) := 2;   
+      (s.pt) := 5
+    )
+  else if !(s.sw)==1 && (f.up4)==1 && !(s.pt)==4 then 
+    (
+      (s.sw) := 3;   
+      (s.pt) := 9
+    )
+  else if !(s.sw)==3 && !(s.pt)==10 then 
+  (
+    (s.sw) := 2;   
+    (s.pt) := 6
+  )
+  else ();;
   
 let model_cap p t f: unit =
   let s = ingress in 
@@ -137,7 +165,7 @@ let model_cap p t f: unit =
   while (compare s egress) != 0 do 
     (
       
-      t s;
+      t s f;
       log s; 
       p s f;
       log s; 
@@ -148,7 +176,9 @@ let model_cap p t f: unit =
 
 
 let main = 
-  model_cap policy_cap topo_cap f2; 
+  let f = f1 in 
+   (string_of_failure f);
+  model_cap policy_cap topo_cap f; 
 
   (*
   model policy topo;
