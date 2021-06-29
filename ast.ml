@@ -1,4 +1,9 @@
 
+type failure = 
+    Eq of int * bool 
+  | Choice of (float * failure) list
+  | Conj of failure * failure
+
 
 type literal = 
     | INT of int

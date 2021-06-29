@@ -177,7 +177,7 @@ let model_cap p t f: unit =
 
 let main = 
   let f = f1 in 
-   (string_of_failure f);
+  (string_of_failure f);
   model_cap policy_cap topo_cap f; 
 
   (*
