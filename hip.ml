@@ -20,17 +20,23 @@ let rec string_of_expression expr : string =
     | x::xs ->  x ^ "," ^ aux xs 
   in
   match expr with 
-  | Unit -> ""
+  | Drop -> "drop"
+  | Skip -> "skip"
   | Call (na, parms) -> na ^ " (" ^ aux (List.map (fun a -> string_of_literal a) parms) ^ ") "
   | Union     (e1, e2) -> string_of_expression e1 ^ " \\/ " ^ string_of_expression e2
   | Sequence  (e1, e2) -> string_of_expression e1 ^ " /\\ " ^ string_of_expression e2
+  | Assign (name, n) -> name ^ " <- " ^ string_of_int n
+  | Test (name, n) -> name ^ " = " ^ string_of_int n
+  | IfElse (if_pair, final) ->
+    aux (List.map (fun (_if, _then) -> 
+      "if " ^ string_of_expression _if ^ " then " ^ 
+      string_of_expression _then ^ "\n else "
+    ) if_pair)
+    ^ string_of_expression final
 
-  
   | _ -> raise (Foo "song")
   (*
-  | IfElse of (expression * expression) list
 (* kleneen *)
-  | Filter    of predicate 
   | Assign    of string * int
   | Choice    of (term * expression) list
   | Iteration of expression
@@ -46,15 +52,15 @@ let string_of_statement statement: string=
   in
   let (name, params, expr) = statement in 
   name ^ 
-  " (" ^ aux params ^ ") "
-  ^ string_of_expression expr
+  " (" ^ aux params ^ ") = "
+  ^ string_of_expression expr ^ "\n"
   ;;
 
 
 let rec string_of_program statements  :string =
   match statements with 
   | [] -> ""
-  | x :: xs -> string_of_statement x ^ string_of_program xs
+  | x :: xs -> string_of_statement x ^  string_of_program xs
   ;;
 
 

@@ -1,10 +1,6 @@
-type predicate = 
-    | Drop
-    | Skip 
-    | EQ of string * int
-    | Conj of predicate * predicate
-    | Disj of predicate * predicate
-    | Neg  of predicate 
+type ('a, 'b, 'c) either = Left of 'a | Right of 'b | Middle of 'c
+
+
 
 type term =
     | Const of float
@@ -19,11 +15,12 @@ type literal =
 
 
 type expression = 
-    | Unit
     | Call of string * (literal list)
-    | IfElse of (expression * expression) list
+    | IfElse of (expression * expression) list * expression
 (* kleneen *)
-    | Filter    of predicate 
+    | Drop
+    | Skip 
+    | Test    of string * int
     | Assign    of string * int
     | Union     of expression * expression
     | Sequence  of expression * expression

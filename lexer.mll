@@ -40,7 +40,13 @@ rule token = parse
 | '(' { LPAR }
 | ')' { RPAR }
 | '"' { read_string (Buffer.create 17) lexbuf }
-
+| ';' { SIMI }
+| "<-" {ASSIGN}
+| "if" {IF}
+| "else" {ELSE}
+| "drop" {DROP}
+| "skip" {SKIP}
+| "then" {THEN}
 | id as str { VAR str }
 
 | eof { EOF }
@@ -106,7 +112,7 @@ and read_string buf = parse
 | "abort" {ABORT}
 | "yield" {YIELD}
 | "signal" {SIGNAL}
-| "if" {IF}
+
 | "halt" {HALT}
 | "const" {CONST}
 | "let" {LET}
@@ -115,7 +121,7 @@ and read_string buf = parse
 | "function" {FUNCTION}
 | "return" {RETURN}
 | "break" {BREAK}
-| "else" {ELSE}
+
 | "try" {TRY}
 | "catch" {CATCH}
 | "run" {RUN}
@@ -134,7 +140,7 @@ and read_string buf = parse
 | '-' { MINUS }
 
 | '*' {KLEENE}
-| ';' { SIMI }
+
 | '"'      { read_string (Buffer.create 17) lexbuf }
 | "//" { read_single_line_comment lexbuf }
 | "(*" { read_multi_line_comment lexbuf }

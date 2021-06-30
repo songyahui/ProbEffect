@@ -1,14 +1,17 @@
-a (b,  c) = f (1, "up3")
-
-(*
-f0 = (up3 <- 1; up4 <- 1)
+f0 ()= up3 <- 1; up4 = 1
 
 
-t = 
+t () = 
   if sw=1; pt=2; up3=1 then sw<-2; pt<-5 else 
   if sw=1; pt=4; up4=1 then sw<-3; pt<-9 else  
   if sw=3; pt=10 then sw<-2;pt<-6 else 
   drop
+
+(*
+f0 = up3 <- 1; up4 <- 1
+
+
+
 
 p1 = if up 3 = 1 
         then pt <- 3
