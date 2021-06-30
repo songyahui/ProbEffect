@@ -39,6 +39,8 @@ rule token = parse
 | ',' { COMMA }
 | '(' { LPAR }
 | ')' { RPAR }
+| '{' { LBRACK  }
+| '}' { RBRACK }
 | '"' { read_string (Buffer.create 17) lexbuf }
 | ';' { SIMI }
 | "<-" {ASSIGN}
@@ -47,6 +49,7 @@ rule token = parse
 | "drop" {DROP}
 | "skip" {SKIP}
 | "then" {THEN}
+| "ProbModel" {ProbModel}
 | id as str { VAR str }
 
 | eof { EOF }
@@ -131,8 +134,7 @@ and read_string buf = parse
 | "requires" {REQUIRE}
 | "ensures" {ENSURE}
 
-| '{' { LBRACK  }
-| '}' { RBRACK }
+
 | '.' { CONCAT }
 | ':' { COLON }
 

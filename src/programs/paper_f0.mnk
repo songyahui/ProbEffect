@@ -7,43 +7,50 @@ t () =
   if sw=3; pt=10 then sw<-2;pt<-6 else 
   drop
 
+
+p1() = if up3 = 1 
+        then pt <- 3
+        else pt <- 4 
+
+p2() = pt <- 7
+
+p2() = pt <- 10
+
+p ()= 
+  if sw=1 then p1 () else 
+  if sw=2 then p2 ()
+  else p3 ()
+
+
+ingress ()= sw <- 1; pt <- 2
+
+egress ()= sw <- 2; pt <- 7
+
+p ()= 
+  if sw=1 then pt = 2 else 
+  if sw=2 then pt = 2 else 
+  drop
+
+
+main () = ProbModel {
+    policy = p ();
+    topology = t ();
+    failure = f0 ();
+    src = ingress ();
+    des = egress ();
+    }
+
+
+
 (*
 f0 = up3 <- 1; up4 <- 1
 
 
 
 
-p1 = if up 3 = 1 
-        then pt <- 3
-        else pt <- 4 
-
-p2 = pt <- 7
-
-p2 = pt <- 10
-
-p = 
-  if sw=1 then p1 else 
-  if sw=2 then p2 
-  else p3
 
 
-ingress = sw <- 1; pt <- 2
 
-egress = sw <- 2; pt <- s7
-
-p = 
-  if sw=1 then pt = 2 else 
-  if sw=2 then pt = 2 else 
-  drop
-
-
-main = ModelProb {
-    policy = p;
-    topology = t;
-    failure = f0;
-    src = ingress;
-    des = egress;
-    }
 
 *)
 

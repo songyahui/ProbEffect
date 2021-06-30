@@ -17,6 +17,7 @@ type literal =
 type expression = 
     | Call of string * (literal list)
     | IfElse of (expression * expression) list * expression
+    | Record of (string * expression) list
 (* kleneen *)
     | Drop
     | Skip 

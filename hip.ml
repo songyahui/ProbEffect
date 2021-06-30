@@ -33,6 +33,9 @@ let rec string_of_expression expr : string =
       string_of_expression _then ^ "\n else "
     ) if_pair)
     ^ string_of_expression final
+  | Record (pairs) -> aux (
+    List.map (fun (a, b) -> ) pairs
+  )
 
   | _ -> raise (Foo "song")
   (*

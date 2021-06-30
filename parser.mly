@@ -5,12 +5,11 @@
 
 %token <int> INTE
 
-%token NEWLINE
-
 %token <string> VAR 
 
 %token EQ COMMA LPAR RPAR ASSIGN SIMI
-%token SKIP DROP IF ELSE THEN
+%token SKIP DROP IF ELSE THEN 
+%token ProbModel LBRACK RBRACK
 
 (*
 
@@ -60,10 +59,19 @@ maybeSeq:
 | SIMI n = expression_shell {Some n}
 
 
+record_helper:
+| {[]}
+| name = VAR EQ rest = expression SIMI more= record_helper {(name, rest)::more} 
 
 expression:
 | SKIP {Skip} 
 | DROP {Drop} 
+| ProbModel LBRACK 
+r = record_helper 
+RBRACK {
+  Record r 
+}
+
 | IF ex1 = expression_shell THEN ex2 = expression_shell ELSE rest= more_ifelse {
   let (more_if, final) = rest in 
   IfElse (List.append [(ex1, ex2)] more_if, final)
@@ -80,7 +88,7 @@ expression:
 }
 
 more_ifelse:
-| ex = expression {([], ex)}
+| ex = expression_shell {([], ex)}
 | IF ex1 = expression_shell THEN ex2 = expression_shell rest= more_ifelse {
   let (more_if, final) = rest in 
   (List.append [(ex1, ex2)] more_if, final)
@@ -90,6 +98,7 @@ more_ifelse:
 
 
 expr_rest: 
+
 | LPAR  p = real_parameter RPAR   {Left p}
 | ASSIGN n = INTE {Right n}
 | EQ n = INTE {Middle n}
