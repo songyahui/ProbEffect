@@ -30,19 +30,23 @@ let op = ['+' '\\' '-' '/' '*' '=' '.' '$' '<' '>' ':' '&''|''^''?''%''#''@''~''
 
 rule token = parse
 | white    { token lexbuf }
-| newline  {(next_line lexbuf; token lexbuf) }
+| newline  { (next_line lexbuf; token lexbuf);  }
 | int      { INTE (int_of_string (Lexing.lexeme lexbuf)) }
 
+| "//" { read_single_line_comment lexbuf }
+| "(*" { read_multi_line_comment lexbuf }
+| '=' {EQ}
+| ',' { COMMA }
+| '(' { LPAR }
+| ')' { RPAR }
+| '"' { read_string (Buffer.create 17) lexbuf }
+
+| id as str { VAR str }
 
 | eof { EOF }
 
 | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
 
-
-
-| eof { EOF }
-
-| _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
 
 
 and read_single_line_comment = parse
@@ -83,7 +87,7 @@ and read_string buf = parse
 | "<=" {LTEQ}
 | '>' {GT}
 | '<' {LT}
-| '=' {EQ}
+
 | ">=" {GTEQ}
 | "<=" {LTEQ}
 | "var" {VARKEY}
@@ -120,17 +124,15 @@ and read_string buf = parse
 | "=>" {IMPLY}
 | "requires" {REQUIRE}
 | "ensures" {ENSURE}
-| '(' { LPAR }
 
-| ')' { RPAR }
 | '{' { LBRACK  }
 | '}' { RBRACK }
 | '.' { CONCAT }
 | ':' { COLON }
-| id as str { VAR str }
+
 | '+' { PLUS }
 | '-' { MINUS }
-| ',' { COMMA }
+
 | '*' {KLEENE}
 | ';' { SIMI }
 | '"'      { read_string (Buffer.create 17) lexbuf }
@@ -197,6 +199,5 @@ and read_string buf = parse
 | "else" {ELSE}
 | "[]" {GLOBAL}
 | "include" {INCLUDE}
-| '"' { read_string (Buffer.create 17) lexbuf }
 
 *)
