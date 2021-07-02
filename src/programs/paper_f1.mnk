@@ -1,44 +1,46 @@
-f1 = 0.5  @ (up3 <- 1; up4 <- 1)
+f1 () =  0.5  @ (up3 <- 1; up4 <- 1)
     | 0.25 @ (up3 <- 0; up4 <- 1)
     | 0.25 @ (up3 <- 1; up4 <- 0)
 
 
-
-t = 
-  if sw=1; pt=2; up 3=1 then sw<-2; pt<-5 else 
-  if sw=1; pt=4; up 4=1 then sw<-3; pt<-9 else  
+t () = 
+  if sw=1; pt=2; up3=1 then sw<-2; pt<-5 else 
+  if sw=1; pt=4; up4=1 then sw<-3; pt<-9 else  
   if sw=3; pt=10 then sw<-2;pt<-6 else 
   drop
 
-p1 = if up 3 = 1 
+
+p1() = if up3 = 1 
         then pt <- 3
         else pt <- 4 
 
-p2 = pt <- 7
+p2() = pt <- 7
 
-p2 = pt <- 10
+p2() = pt <- 10
 
-p = 
-  if sw=1 then p1 else 
-  if sw=2 then p2 
-  else p3
+p ()= 
+  if sw=1 then p1 () else 
+  if sw=2 then p2 ()
+  else p3 ()
 
 
+ingress ()= sw <- 1; pt <- 2
 
-ingress = sw <- 1; pt <- 2
-egress = sw <- 2; pt <- s7
+egress ()= sw <- 2; pt <- 7
 
-p = 
+p ()= 
   if sw=1 then pt = 2 else 
   if sw=2 then pt = 2 else 
   drop
 
-main = ModelProb {
-    policy = p;
-    topology = t;
-    failure = f1;
-    src = ingress;
-    des = egress;
+
+main () = ProbModel {
+    policy = p ();
+    topology = t ();
+    failure = f1 ();
+    src = ingress ();
+    des = egress ();
     }
+
 
 

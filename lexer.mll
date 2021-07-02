@@ -25,13 +25,14 @@ let float = digit+ frac? exp?
 let white = [' ' '\t']+
 let newline = '\n' | '\r' | "\r\n" 
 let id = ['A'-'Z' 'a'-'z'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
-let op = ['+' '\\' '-' '/' '*' '=' '.' '$' '<' '>' ':' '&''|''^''?''%''#''@''~''!''+''|']+
+let op = ['+' '\\' '-' '/' '*' '=' '.' '$' '<' '>' ':' '&''^''?''%''#''~''!''+''|']+
 
 
 rule token = parse
 | white    { token lexbuf }
 | newline  { (next_line lexbuf; token lexbuf);  }
 | int      { INTE (int_of_string (Lexing.lexeme lexbuf)) }
+| float { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
 
 | "//" { read_single_line_comment lexbuf }
 | "(*" { read_multi_line_comment lexbuf }
@@ -43,6 +44,10 @@ rule token = parse
 | '}' { RBRACK }
 | '"' { read_string (Buffer.create 17) lexbuf }
 | ';' { SIMI }
+| '@' {AT}
+| '|' {BAR}
+| '+' { PLUS }
+| '-' { MINUS }
 | "<-" {ASSIGN}
 | "if" {IF}
 | "else" {ELSE}
@@ -138,8 +143,7 @@ and read_string buf = parse
 | '.' { CONCAT }
 | ':' { COLON }
 
-| '+' { PLUS }
-| '-' { MINUS }
+
 
 | '*' {KLEENE}
 
@@ -162,7 +166,6 @@ and read_string buf = parse
 | '[' { LBrackets }
 | ']' { RBrackets }
 | '~' {NEGATION}
-| float { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
 
 | "|-" {ENTIL}
 

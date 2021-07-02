@@ -7,14 +7,17 @@
 
 %token <string> VAR 
 
+%token <float> FLOAT 
+
 %token EQ COMMA LPAR RPAR ASSIGN SIMI
 %token SKIP DROP IF ELSE THEN 
-%token ProbModel LBRACK RBRACK
+%token ProbModel LBRACK RBRACK AT BAR
+%token  MINUS PLUS  
 
 (*
 
 %token     COMMA LBRACK RBRACK      
-%token  MINUS PLUS   
+ 
  EOF GT LT   GTEQ LTEQ   CONCAT 
 %token VARKEY KLEENE NEW HIPHOP MODULE IN OUT 
 %token EMIT AWAIT DO EVERY FORK PAR LOOP YIELD ABORT SIGNAL
@@ -48,6 +51,7 @@ literal:
 | str = STRING {STRING str}
 
 expression_shell:
+| LPAR ex1 = expression_shell RPAR {ex1}
 | ex1 = expression obj = maybeSeq {
   match obj with 
   | None -> ex1 
@@ -63,9 +67,21 @@ record_helper:
 | {[]}
 | name = VAR EQ rest = expression SIMI more= record_helper {(name, rest)::more} 
 
+term:
+| f = FLOAT {Const f}
+| v = VAR {Var v }
+| t1 = term PLUS t2 = term {Add (t1, t2)}
+| t1 = term MINUS t2 = term {Sub (t1, t2)}
+
+
+distrubution:
+| {[]}
+| BAR f = term AT ex = expression_shell rest = distrubution {(f, ex):: rest} 
+
 expression:
 | SKIP {Skip} 
 | DROP {Drop} 
+| f = term AT ex = expression_shell rest = distrubution {Distribution ((f, ex)::rest)}
 | ProbModel LBRACK 
 r = record_helper 
 RBRACK {

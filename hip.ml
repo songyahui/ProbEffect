@@ -6,6 +6,13 @@ open List
 
 exception Foo of string
 
+let rec string_of_term t: string =
+  match t with 
+  | Const f -> string_of_float f 
+  | Var   v -> v
+  | Add  (t1, t2) -> string_of_term t1 ^ " + " ^ string_of_term t2
+  | Sub  (t1, t2) -> string_of_term t1 ^ " - " ^ string_of_term t2;;
+
 let string_of_literal (l:literal) : string = 
   match l with 
   | STRING str -> str
@@ -38,6 +45,12 @@ let rec string_of_expression expr : string =
       a ^ " = " ^ string_of_expression b ^";\n"
     ) pairs) 
   )^ "\n}\n"
+
+  | Distribution  pairs -> aux (
+    (List.map (fun (a, b) -> 
+    " | " ^ string_of_term a ^ " @ " ^ string_of_expression b  ^ "\n"
+    ) pairs) 
+  )
 
   | _ -> raise (Foo "song")
   (*
