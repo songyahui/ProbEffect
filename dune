@@ -7,7 +7,7 @@
 
 
 (executables
- (names hip mcNetKAT)
+ (names hip trs mcNetKAT)
  (modules parser lexer Pretty hip trs Ast McNetKAT)
 )
 

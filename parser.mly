@@ -13,7 +13,9 @@
 %token SKIP DROP IF ELSE THEN 
 %token ProbModel LBRACK RBRACK AT BAR
 %token  MINUS PLUS  
-
+%token EMPTY CONCAT KLEENE GTEQ LTEQ GT LT CONJ
+%token TRUE FALSE ENTIL NEGATION POWER CHOICE 
+%token DISJ
 (*
 
 %token     COMMA LBRACK RBRACK      
@@ -28,11 +30,17 @@
 
 %token EOF
 
-%start program
+%start program ee
 %type <(Ast.statement) list> program
-
+%type <(Ast.entilment) list > ee
 
 %%
+
+ee: 
+| EOF {[]}
+| a = entailment SIMI r = ee { append [a] r }
+
+
 
 program:
 | EOF {[]}
@@ -66,12 +74,6 @@ maybeSeq:
 record_helper:
 | {[]}
 | name = VAR EQ rest = expression SIMI more= record_helper {(name, rest)::more} 
-
-term:
-| f = FLOAT {Const f}
-| v = VAR {Var v }
-| t1 = term PLUS t2 = term {Add (t1, t2)}
-| t1 = term MINUS t2 = term {Sub (t1, t2)}
 
 
 distrubution:
@@ -154,3 +156,48 @@ maybeNext:
 | COMMA v = parameter {Some v}
 
 
+term:
+| str = VAR { Var str }
+| f = FLOAT {Const f}
+| LPAR r = term RPAR { r }
+| LPAR a = term MINUS b = term RPAR {Sub (a, b )}
+
+| LPAR a = term PLUS b = term RPAR {Add (a, b)}
+
+
+
+
+pure:
+| TRUE {TRUE}
+| FALSE {FALSE}
+| NEGATION LPAR a = pure RPAR {Neg a}
+| LPAR r = pure RPAR { r }
+| a = term GT b = term {Gt (a, b)}
+| a = term LT b = term {Lt (a, b)}
+| a = term GTEQ b = term {GtEq (a, b)}
+| a = term LTEQ b = term {LtEq (a, b)}
+| a = term EQ b = term {Eq (a, b)}
+| a = pure CONJ b = pure {PureAnd (a, b)}
+| a = pure DISJ b = pure {PureOr (a, b)}
+
+
+
+es:
+| EMPTY { Empty }
+| LPAR r = es RPAR { r }
+| a = es CHOICE b = es { Union(a, b) }
+| a = es CONCAT b = es { Sequence(a, b) } 
+| LPAR a = es POWER KLEENE RPAR{Kleene a}
+
+
+
+effect:
+| LPAR r = effect RPAR { r }
+| a = pure  CONJ  b= es  {Effect (a, b)}
+| a = effect  DISJ  b=effect  {Disj (a,b)}
+
+
+
+
+entailment:
+| lhs = effect   ENTIL   rhs = effect {EE (lhs, rhs)}

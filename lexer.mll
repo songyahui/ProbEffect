@@ -33,7 +33,7 @@ rule token = parse
 | newline  { (next_line lexbuf; token lexbuf);  }
 | int      { INTE (int_of_string (Lexing.lexeme lexbuf)) }
 | float { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
-
+| "emp" { EMPTY }
 | "//" { read_single_line_comment lexbuf }
 | "(*" { read_multi_line_comment lexbuf }
 | '=' {EQ}
@@ -48,6 +48,22 @@ rule token = parse
 | '|' {BAR}
 | '+' { PLUS }
 | '-' { MINUS }
+
+| "TRUE" { TRUE }
+| "FALSE" { FALSE }
+| '|' { CHOICE }
+| "|-" {ENTIL}
+| '.' { CONCAT }
+| '~' {NEGATION}
+| '^' { POWER }
+
+| ">=" {GTEQ}
+| "<=" {LTEQ}
+| '>' {GT}
+| '<' {LT}
+| "\\/" {DISJ}
+| "/\\" {CONJ}
+| '*' {KLEENE}
 | "<-" {ASSIGN}
 | "if" {IF}
 | "else" {ELSE}
@@ -56,6 +72,7 @@ rule token = parse
 | "then" {THEN}
 | "ProbModel" {ProbModel}
 | id as str { VAR str }
+
 
 | eof { EOF }
 
@@ -97,10 +114,8 @@ and read_string buf = parse
 
 (*
 
-| ">=" {GTEQ}
-| "<=" {LTEQ}
-| '>' {GT}
-| '<' {LT}
+| '[' { LBrackets }
+| ']' { RBrackets }
 
 | ">=" {GTEQ}
 | "<=" {LTEQ}
@@ -140,31 +155,23 @@ and read_string buf = parse
 | "ensures" {ENSURE}
 
 
-| '.' { CONCAT }
-| ':' { COLON }
-
-
-
-| '*' {KLEENE}
 
 | '"'      { read_string (Buffer.create 17) lexbuf }
 | "//" { read_single_line_comment lexbuf }
 | "(*" { read_multi_line_comment lexbuf }
 
-| "true" { TRUEToken }
-| "false" { FALSEToken }
+
 | '?' {QUESTION}
-| "/\\" {CONJ}
+
 | "emp" { EMPTY } 
 
 | '#' { SHARP }
 | '^' { POWER } 
 | '~' {NEGATION}
 
-| "\\/" {DISJ}
+
 | '!' {LTLNOT}
-| '[' { LBrackets }
-| ']' { RBrackets }
+
 | '~' {NEGATION}
 
 | "|-" {ENTIL}
