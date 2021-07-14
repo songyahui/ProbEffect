@@ -1,0 +1,8 @@
+
+TRUE /\ emp |- TRUE /\ emp: true;
+
+TRUE /\ {A} |- TRUE /\ {B}: false;
+
+TRUE /\ {A} |- TRUE /\ {B}:false;
+
+TRUE /\ [0.5 -> {A}| 0.5 -> {B}] |- TRUE /\ {B}:false;

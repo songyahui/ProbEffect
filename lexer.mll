@@ -34,6 +34,7 @@ rule token = parse
 | int      { INTE (int_of_string (Lexing.lexeme lexbuf)) }
 | float { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
 | "emp" { EMPTY }
+| "->" {LEADTO}
 | "//" { read_single_line_comment lexbuf }
 | "(*" { read_multi_line_comment lexbuf }
 | '=' {EQ}
@@ -48,10 +49,13 @@ rule token = parse
 | '|' {BAR}
 | '+' { PLUS }
 | '-' { MINUS }
-
+| '[' { LBrackets }
+| ']' { RBrackets }
 | "TRUE" { TRUE }
 | "FALSE" { FALSE }
-| '|' { CHOICE }
+| "true" { True }
+| ':' {COLON}
+| "false" { False }
 | "|-" {ENTIL}
 | '.' { CONCAT }
 | '~' {NEGATION}
@@ -114,8 +118,7 @@ and read_string buf = parse
 
 (*
 
-| '[' { LBrackets }
-| ']' { RBrackets }
+
 
 | ">=" {GTEQ}
 | "<=" {LTEQ}

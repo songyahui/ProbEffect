@@ -15,7 +15,8 @@
 %token  MINUS PLUS  
 %token EMPTY CONCAT KLEENE GTEQ LTEQ GT LT CONJ
 %token TRUE FALSE ENTIL NEGATION POWER CHOICE 
-%token DISJ
+%token DISJ LBrackets RBrackets LEADTO
+%token COLON True False
 (*
 
 %token     COMMA LBRACK RBRACK      
@@ -184,11 +185,16 @@ pure:
 
 es:
 | EMPTY { Empty }
+| LBRACK r = VAR RBRACK { Instant r }
 | LPAR r = es RPAR { r }
-| a = es CHOICE b = es { Union(a, b) }
+| a = es DISJ b = es { Union(a, b) }
 | a = es CONCAT b = es { Sequence(a, b) } 
 | LPAR a = es POWER KLEENE RPAR{Kleene a}
+| LBrackets f= term LEADTO e = es rest=pcase_help RBrackets {PCases ((f, e)::rest)}
 
+pcase_help:
+| {[]}
+| BAR f= term LEADTO e = es rest=pcase_help {((f, e)::rest)}
 
 
 effect:
@@ -197,7 +203,10 @@ effect:
 | a = effect  DISJ  b=effect  {Disj (a,b)}
 
 
+expect :
+| True {true}
+| False {false}
 
 
 entailment:
-| lhs = effect   ENTIL   rhs = effect {EE (lhs, rhs)}
+| lhs = effect   ENTIL   rhs = effect  COLON e = expect { (lhs, rhs, e)}

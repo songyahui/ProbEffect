@@ -1,7 +1,5 @@
 type ('a, 'b, 'c) either = Left of 'a | Right of 'b | Middle of 'c
 
-
-
 type terms =
     | Const of float
     | Var   of string
@@ -39,7 +37,7 @@ type program = statement list
 type es =
     | Bottom
     | Empty
-    | Instant  of string list
+    | Instant  of string
     | Sequence of es * es
     | Union    of es * es
     | Kleene   of es
@@ -64,7 +62,7 @@ type eff =
           | Disj of eff * eff
 
 
-type entilment = EE of eff * eff
+type entilment = eff * eff * bool
 
     
 (* 
