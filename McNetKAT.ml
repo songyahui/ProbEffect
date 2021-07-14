@@ -176,15 +176,22 @@ let model_cap p t f: unit =
 
 
 let main = 
+  model policy topo;
+
+  
+
+  (*
   let f = f1 in 
   (string_of_failure f);
   model_cap policy_cap topo_cap f; 
-
-  (*
-  model policy topo;
+  
   model_cap policy_cap topo f0; 
   model_cap policy_cap topo f1; 
   model_cap policy_cap topo f2; 
   *)
 
+
+  (*
+    True: [0.1 → {A} | 0.9 → 𝝐]  ╞═  True: {A}* :: false
+  *)
 
