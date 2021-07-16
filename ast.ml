@@ -61,7 +61,7 @@ type eff =
             Effect of pure * es
           | Disj of eff * eff
 
-
+type hypotheses = (eff * eff) list
 type entilment = eff * eff * bool
 
     

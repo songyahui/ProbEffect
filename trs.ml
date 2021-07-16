@@ -61,6 +61,20 @@ let string_of_ee (lhs:eff) (rhs:eff) (e:bool) :string =
 
 
 
+let inclusion (lhs:eff) (rhs:eff) (delta:hypotheses) : (binary_tree * bool  * hypotheses) = 
+  print_string (string_of_ee lhs rhs true);
+  (Leaf, true, delta)
+  ;;
+
+let printReport (lhs:eff) (rhs:eff) (e:bool) : string =
+  let startTimeStamp = Sys.time() in
+  let (tree, re, _) = inclusion lhs rhs [] in 
+  let verification_time = "[Verification Time: " ^ string_of_float (Sys.time() -. startTimeStamp) ^ " s]\n" in
+  let result = printTree ~line_prefix:"* " ~get_name ~get_children tree in
+  let buffur = ( "===================================="^"\n" ^(string_of_ee lhs rhs e)^"\n[Result] " ^(if re then "Succeed\n" else "Fail\n") ^ verification_time^" \n\n"^ result)
+  in buffur
+  
+  ;;
 
 let () =
   let inputfile = (Sys.getcwd () ^ "/" ^ Sys.argv.(1)) in
@@ -71,11 +85,11 @@ print_string (inputfile ^ "\n" ^ outputfile^"\n");*)
       let lines =  (input_lines ic ) in
       let line = List.fold_right (fun x acc -> acc ^ "\n" ^ x) (List.rev lines) "" in
       let entailments = Parser.ee Lexer.token (Lexing.from_string line) in
-      
-      let result = List.fold_left (fun acc (a, b, c) -> acc ^ string_of_ee a b c ) "" entailments in 
-      print_string (result);
-      
-      
+            
+      let result = List.map (fun (lhs, rhs, e) ->  printReport lhs rhs e ) entailments in 
+      let final_result = List.fold_right (fun x acc -> acc  ^ x ^ "\n") ( result) "" in 
+
+      print_string (final_result);
 
 
       flush stdout;                (* 现在写入默认设备 *)
