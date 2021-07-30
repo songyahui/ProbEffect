@@ -176,15 +176,16 @@ let model_cap p t f: unit =
 
 
 let main = 
-  model policy topo;
+  let f = f2 in 
+  (string_of_failure f);
+  model_cap policy_cap topo_cap f; 
+  
 
   
 
   (*
-  let f = f1 in 
-  (string_of_failure f);
-  model_cap policy_cap topo_cap f; 
-  
+
+model policy topo;
   model_cap policy_cap topo f0; 
   model_cap policy_cap topo f1; 
   model_cap policy_cap topo f2; 
@@ -195,3 +196,56 @@ let main =
     True: [0.1 → {A} | 0.9 → 𝝐]  ╞═  True: {A}* :: false
   *)
 
+(*
+// Functional Code for Figure 1
+
+let  switch1(inp) = match inp with
+            None -> (Some p, None)
+			Some p -> (Some p, None)
+			
+let  switch2(inp) = match inp with
+            None -> (None)
+			Some p -> (Some p)
+
+let  switch3(inp1,inp2) = match inp with
+            (None,None) -> None)
+			(Some p,_) -> (Some p)
+			(_,Some p) -> (Some p)
+
+let topology(source) = 
+     let (r1_2,r1_3) = switch1(source) in
+	 let r3_2 = switch3 r1_3 in
+	 let r2_2 = switch2 r1_2 r3_2 in
+	 r2_2
+
+requires prevnum = 1
+	ensures  res = []
+    requires prevnum = 2
+	ensures  res = ..
+    requires prevnum = 3
+	ensures  res = ..  length(res.val)
+*)
+
+decreasing_list(n)
+  requires n > 0 
+  ensures  res    = (6-n+1)/6 -> [] | (n-1)/6 -> n':: (decreasing_list(n').res
+  ensures  length = (6-n+1)/6 -> 0  | (n-1)/6 -> 1 +  (decreasing_list(n').length
+	
+  P_n(length>0) = (n-1)/6 
+  P_n(length>1) = (n-1)/6 *  (n'-1)/6 where n > n'
+  P_n(length>2) = (n-1)/6 *  (n'-1)/6 *  (n''-1)/6 where n > n' > n''
+
+
+  6 -> 1/6 * (1/6 * 4/6  + 1/6 * 3/6 + 1/6 * 2/6 + 1/6 * 1/6) = 10/216
+  5 -> 1/6 * (1/6 * 3/6 + 1/6 * 2/6 + 1/6 * 1/6) = 6/216
+  4 -> 1/6 * (1/6 * 2/6 + 1/6 * 1/6) = 3/216 
+  3 -> 1/6 * 1/6 * 1/6 = 1/216
+
+  sum = 20/216
+
+
+
+   { d1=dice();
+     if d1>=n then []
+	 else d1::decreasing_list(d1);
+	}
