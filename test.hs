@@ -5,7 +5,7 @@ increase f n = map (\ (a, b) -> (f * a, n : b))
 
 decreasingList :: Int -> [(Float, [Int])]
 decreasingList prevnum
-  | prevnum <= 1 = [(1.0, [])]
+  | prevnum <= 1 = [(1.0, [1])]
   | prevnum == 2
   = let dice_1 = increase (1 / 6) 2 (decreasingList 1) in
     let rest   = increase (5 / 6) 2 (decreasingList 1) in dice_1 ++ rest
